@@ -1,13 +1,10 @@
 import React from 'react';
-import RegisterForm from '../components/auth/RegisterForm';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import RegisterForm from '../components/LoginComponents/RegisterForm';
 
 const Register = () => {
   return (
     <>
       <RegisterForm />
-      <ToastContainer />
     </>
   );
 };

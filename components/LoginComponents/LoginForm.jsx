@@ -19,8 +19,7 @@ const LoginForm = () => {
       ...prev,
       [name]: value,
     }));
-    
-    // Clear error when user types
+
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -31,29 +30,29 @@ const LoginForm = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Email is invalid';
     }
-    
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     try {
       await login.mutateAsync(formData);
-      router.push('/dashboard'); // Redirect on successful login
+      router.push('/dashboard');
     } catch (error) {
       setErrors({
         form: error.response?.data?.message || 'Login failed. Please try again.',
@@ -62,28 +61,26 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5">
+      <div className="card shadow w-100" style={{ maxWidth: '400px' }}>
+        <div className="card-body">
+          <h2 className="card-title text-center mb-4">Sign in to your account</h2>
+          <p className="text-center text-muted mb-4">
             Or{' '}
-            <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+            <Link href="/register" className="text-primary">
               create a new account
             </Link>
           </p>
-        </div>
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {errors.form && (
-            <div className="rounded-md bg-red-50 p-4">
-              <div className="text-sm text-red-700">{errors.form}</div>
-            </div>
-          )}
-          
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">Email address</label>
+
+          <form onSubmit={handleSubmit}>
+            {errors.form && (
+              <div className="alert alert-danger" role="alert">
+                {errors.form}
+              </div>
+            )}
+
+            <div className="mb-3">
+              <label htmlFor="email" className="visually-hidden">Email address</label>
               <input
                 id="email"
                 name="email"
@@ -91,18 +88,16 @@ const LoginForm = () => {
                 autoComplete="email"
                 value={formData.email}
                 onChange={handleChange}
-                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
-                  errors.email ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                className={`form-control ${errors.email ? 'is-invalid' : ''}`}
                 placeholder="Email address"
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                <div className="invalid-feedback">{errors.email}</div>
               )}
             </div>
-            
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+
+            <div className="mb-3">
+              <label htmlFor="password" className="visually-hidden">Password</label>
               <input
                 id="password"
                 name="password"
@@ -110,47 +105,41 @@ const LoginForm = () => {
                 autoComplete="current-password"
                 value={formData.password}
                 onChange={handleChange}
-                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
-                  errors.password ? 'border-red-300' : 'border-gray-300'
-                } placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm`}
+                className={`form-control ${errors.password ? 'is-invalid' : ''}`}
                 placeholder="Password"
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                <div className="invalid-feedback">{errors.password}</div>
               )}
             </div>
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                Remember me
-              </label>
-            </div>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="form-check">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="form-check-input"
+                />
+                <label htmlFor="remember-me" className="form-check-label">
+                  Remember me
+                </label>
+              </div>
 
-            <div className="text-sm">
-              <Link href="/forgot-password" className="font-medium text-blue-600 hover:text-blue-500">
+              <Link href="/forgot-password" className="text-primary">
                 Forgot your password?
               </Link>
             </div>
-          </div>
 
-          <div>
             <button
               type="submit"
               disabled={login.isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="btn btn-primary w-100"
             >
               {login.isLoading ? 'Signing in...' : 'Sign in'}
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
